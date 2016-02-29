@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -19,9 +21,11 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String SORT = "answerId";
     private Realm realm;
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -42,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
         fakeParentGenerator(realm);
 
         RealmResults<AnswerFlow> answerFlows = realm.allObjects(AnswerFlow.class);
+        answerFlows.sort(SORT, Sort.DESCENDING);
+        DummyAdapter adapter = new DummyAdapter(answerFlows, this);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
         Log.i(TAG, "onCreate: answerFlows from Realm: " + answerFlows.size());
         int counter = 0;
         int childCounter = 0;
